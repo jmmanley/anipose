@@ -56,3 +56,11 @@ Here are some references for DeepLabCut and other things this project relies upo
 - Insafutdinov et al, 2016, "DeeperCut: A Deeper, Stronger, and Faster Multi-Person Pose Estimation Model"
 - Romero-Ramirez et al, 2018, "Speeded up detection of squared fiducial markers"
 - Garrido-Jurado et al, 2016, "Generation of fiducial marker dictionaries using Mixed Integer Linear Programming"
+
+
+## Updates
+Updates by J. Manley:
+- Parallelization: across multiple gpus for analyze (in `pose_videos.py`) and multiple cpus for label (in `label_videos.py`)
+- "Streaming": I chose to leave the `analyze` and `label-2d-filter` processes constantly running (in a `while True` loop, paused with `time.sleep`), such that any new videos I add to my project are automatically processed.
+
+Contact: jmanley@rockefeller.edu

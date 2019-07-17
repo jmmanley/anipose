@@ -138,7 +138,6 @@ def process_session(config, session_path, filtered=False):
 
     n_pool = config["pipeline"]["npool"]
 
-    print(n_pool)
     labels_fnames = glob(os.path.join(session_path, pipeline_pose, "*.h5"))
     labels_fnames = sorted(labels_fnames, key=natural_keys)
 
