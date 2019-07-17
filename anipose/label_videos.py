@@ -12,31 +12,35 @@ from matplotlib.pyplot import get_cmap
 
 from .common import make_process_fun, natural_keys
 
+
 def get_duration(vidname):
     metadata = skvideo.io.ffprobe(vidname)
-    duration = float(metadata['video']['@duration'])
+    duration = float(metadata["video"]["@duration"])
     return duration
+
 
 def get_nframes(vidname):
     metadata = skvideo.io.ffprobe(vidname)
-    length = int(metadata['video']['@nb_frames'])
+    length = int(metadata["video"]["@nb_frames"])
     return length
 
-def connect(img, points, bps, bodyparts, col=(0,255,0,255)):
+
+def connect(img, points, bps, bodyparts, col=(0, 255, 0, 255)):
     try:
         ixs = [bodyparts.index(bp) for bp in bps]
     except ValueError:
         return
 
     for a, b in zip(ixs, ixs[1:]):
-        if np.any(np.isnan(points[[a,b]])):
+        if np.any(np.isnan(points[[a, b]])):
             continue
         pa = tuple(np.int32(points[a]))
         pb = tuple(np.int32(points[b]))
         cv2.line(img, tuple(pa), tuple(pb), col, 4)
 
+
 def connect_all(img, points, scheme, bodyparts):
-    cmap = get_cmap('tab10')
+    cmap = get_cmap("tab10")
     for cnum, bps in enumerate(scheme):
         col = cmap(cnum % 10, bytes=True)
         col = [int(c) for c in col]
@@ -46,7 +50,7 @@ def connect_all(img, points, scheme, bodyparts):
 def visualize_labels(config, labels_fname, vid_fname, outname):
 
     try:
-        scheme = config['labeling']['scheme']
+        scheme = config["labeling"]["scheme"]
     except KeyError:
         scheme = []
 
@@ -61,21 +65,23 @@ def visualize_labels(config, labels_fname, vid_fname, outname):
 
     fps = cap.get(cv2.CAP_PROP_FPS)
 
-    writer = skvideo.io.FFmpegWriter(outname, inputdict={
-        # '-hwaccel': 'auto',
-        '-framerate': str(fps),
-    }, outputdict={
-        '-vcodec': 'h264', '-qp': '30'
-    })
+    writer = skvideo.io.FFmpegWriter(
+        outname,
+        inputdict={
+            # '-hwaccel': 'auto',
+            "-framerate": str(fps)
+        },
+        outputdict={"-vcodec": "h264", "-qp": "30"},
+    )
 
     last = len(dlabs)
 
-    cmap = get_cmap('tab10')
+    cmap = get_cmap("tab10")
 
-    points = [(dlabs[bp]['x'], dlabs[bp]['y']) for bp in bodyparts]
+    points = [(dlabs[bp]["x"], dlabs[bp]["y"]) for bp in bodyparts]
     points = np.array(points)
 
-    scores = [dlabs[bp]['likelihood'] for bp in bodyparts]
+    scores = [dlabs[bp]["likelihood"] for bp in bodyparts]
     scores = np.array(scores)
     scores[np.isnan(scores)] = 0
     scores[np.isnan(points[:, 0])] = 0
@@ -106,7 +112,7 @@ def visualize_labels(config, labels_fname, vid_fname, outname):
             y = int(round(y))
             col = cmap(lnum % 10, bytes=True)
             col = [int(c) for c in col]
-            cv2.circle(img,(x,y), 7, col[:3], -1)
+            cv2.circle(img, (x, y), 7, col[:3], -1)
 
         writer.writeFrame(img)
 
@@ -114,19 +120,18 @@ def visualize_labels(config, labels_fname, vid_fname, outname):
     writer.close()
 
 
-
 def process_session(config, session_path, filtered=False):
-    pipeline_videos_raw = config['pipeline']['videos_raw']
+    pipeline_videos_raw = config["pipeline"]["videos_raw"]
     if filtered:
-        pipeline_videos_labeled = config['pipeline']['videos_labeled_2d_filter']
-        pipeline_pose = config['pipeline']['pose_2d_filter']
+        pipeline_videos_labeled = config["pipeline"]["videos_labeled_2d_filter"]
+        pipeline_pose = config["pipeline"]["pose_2d_filter"]
     else:
-        pipeline_videos_labeled = config['pipeline']['videos_labeled_2d']
-        pipeline_pose = config['pipeline']['pose_2d']
+        pipeline_videos_labeled = config["pipeline"]["videos_labeled_2d"]
+        pipeline_pose = config["pipeline"]["pose_2d"]
 
     print(session_path)
 
-    labels_fnames = glob(os.path.join(session_path, pipeline_pose, '*.h5'))
+    labels_fnames = glob(os.path.join(session_path, pipeline_pose, "*.h5"))
     labels_fnames = sorted(labels_fnames, key=natural_keys)
 
     outdir = os.path.join(session_path, pipeline_videos_labeled)
@@ -138,12 +143,14 @@ def process_session(config, session_path, filtered=False):
         basename = os.path.basename(fname)
         basename = os.path.splitext(basename)[0]
 
-        out_fname = os.path.join(outdir, basename+'.avi')
-        vidname = os.path.join(session_path, pipeline_videos_raw, basename+'.avi')
+        out_fname = os.path.join(outdir, basename + ".avi")
+        vidname = os.path.join(session_path, pipeline_videos_raw, basename + ".avi")
 
         if os.path.exists(vidname):
-            if os.path.exists(out_fname) and \
-               abs(get_nframes(out_fname) - get_nframes(vidname)) < 100:
+            if (
+                os.path.exists(out_fname)
+                and abs(get_nframes(out_fname) - get_nframes(vidname)) < 100
+            ):
                 continue
             print(out_fname)
 

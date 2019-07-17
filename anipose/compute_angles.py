@@ -14,21 +14,21 @@ from .common import make_process_fun, get_data_length, natural_keys
 def compute_angles(config, labels_fname, outname):
     data = pd.read_csv(labels_fname)
 
-    cols = [x for x in data.columns if '_error' in x]
-    bodyparts = [c.replace('_error', '') for c in cols]
+    cols = [x for x in data.columns if "_error" in x]
+    bodyparts = [c.replace("_error", "") for c in cols]
 
     vecs = dict()
     for bp in bodyparts:
-        vec = np.array(data[[bp+'_x', bp+'_y', bp+'_z']])
+        vec = np.array(data[[bp + "_x", bp + "_y", bp + "_z"]])
         vecs[bp] = vec
 
-    angle_names = config['angles'].keys()
+    angle_names = config["angles"].keys()
 
     outdict = dict()
-    outdict['fnum'] = data['fnum']
+    outdict["fnum"] = data["fnum"]
 
     for ang_name in angle_names:
-        a,b,c = config['angles'][ang_name]
+        a, b, c = config["angles"][ang_name]
 
         v1 = vecs[a] - vecs[b]
         v2 = vecs[c] - vecs[b]
@@ -46,11 +46,10 @@ def compute_angles(config, labels_fname, outname):
 
 
 def process_session(config, session_path):
-    pipeline_3d = config['pipeline']['pose_3d']
-    pipeline_angles = config['pipeline']['angles']
+    pipeline_3d = config["pipeline"]["pose_3d"]
+    pipeline_angles = config["pipeline"]["angles"]
 
-    labels_fnames = glob(os.path.join(session_path,
-                                      pipeline_3d, '*.csv'))
+    labels_fnames = glob(os.path.join(session_path, pipeline_3d, "*.csv"))
     labels_fnames = sorted(labels_fnames, key=natural_keys)
 
     outdir = os.path.join(session_path, pipeline_angles)
@@ -62,7 +61,7 @@ def process_session(config, session_path):
         basename = os.path.basename(fname)
         basename = os.path.splitext(basename)[0]
 
-        out_fname = os.path.join(outdir, basename+'.csv')
+        out_fname = os.path.join(outdir, basename + ".csv")
 
         if os.path.exists(out_fname):
             continue

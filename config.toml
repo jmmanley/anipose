@@ -1,3 +1,537 @@
+
+
+"""
+
+
+        try:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+
+
+"""
+
+
+"""
+
+
+"""
+
+
+"""
+
+
+
+
+"""
+
+
+"""
+Last login: Tue Jul 16 22:22:45 on ttys003
+Jasons-MacBook-Pro:~ jason$ gpu
+jmanley@v-gpu.rockefeller.edu's password:
+Last login: Tue Jul 16 21:53:34 2019 from 129.85.88.187
+-bash-4.1$ source ~/.bashrc
+(base) [jmanley@v-gpu ~]$ codes
+(base) [jmanley@v-gpu vaziri-codes]$ cd ..
+(base) [jmanley@v-gpu Codes]$ ls
+dPCA              LFM_Reconstruction  parfor_progress.txt    util
+fontconfig        lfrecon_vsc         py_utils               vaziri-codes
+
+
+        N += 1
+ica               MATLAB              RUN                    workflow
+icamatlabcluster  matlab-schemer      test_pca_gpu_vs_cpu.m  Zebrafish-Tracking
+lfm_cluster       optimal_encoding    untitled folder
+(base) [jmanley@v-gpu Codes]$ cd py_utils/
+(base) [jmanley@v-gpu py_utils]$ ls
+LICENSE  py_utils  py_utils.egg-info  README.md  setup.py
+(base) [jmanley@v-gpu py_utils]$ cd py_utils
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    tf = tempfile.TemporaryFile()
+(base) [jmanley@v-gpu py_utils]$ ls
+__init__.py  inout.py  __pycache__
+(base) [jmanley@v-gpu py_utils]$ vim inout.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+(base) [jmanley@v-gpu py_utils]$
+(base) [jmanley@v-gpu py_utils]$ vim inout.py
+
+[1]+  Stopped                 vim inout.py
+(base) [jmanley@v-gpu py_utils]$ vim inout.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+(base) [jmanley@v-gpu py_utils]$ vim __init__.py
+(base) [jmanley@v-gpu py_utils]$
+(base) [jmanley@v-gpu py_utils]$ vim image.py
+(base) [jmanley@v-gpu py_utils]$ black image.py
+reformatted image.py
+All done! ✨ 🍰 ✨
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+1 file reformatted.
+(base) [jmanley@v-gpu py_utils]$ vim image.py
+(base) [jmanley@v-gpu py_utils]$ black *
+reformatted /ssd_icybox2_1TB/jason/Codes/py_utils/py_utils/inout.py
+All done! ✨ 🍰 ✨
+1 file reformatted, 2 files left unchanged.
+(base) [jmanley@v-gpu py_utils]$ ls
+image.py  __init__.py  inout.py  __pycache__
+(base) [jmanley@v-gpu py_utils]$ vim image.py
+(base) [jmanley@v-gpu py_utils]$ black *
+
+
+"""
+reformatted /ssd_icybox2_1TB/jason/Codes/py_utils/py_utils/image.py
+
+
+"""
+All done! ✨ 🍰 ✨
+
+
+"""
+1 file reformatted, 2 files left unchanged.
+(base) [jmanley@v-gpu py_utils]$ ls
+image.py  __init__.py  inout.py  __pycache__
+(base) [jmanley@v-gpu py_utils]$ vim image
+(base) [jmanley@v-gpu py_utils]$ vim image.py
+(base) [jmanley@v-gpu py_utils]$ black *
+reformatted /ssd_icybox2_1TB/jason/Codes/py_utils/py_utils/image.py
+All done! ✨ 🍰 ✨
+1 file reformatted, 2 files left unchanged.
+(base) [jmanley@v-gpu py_utils]$ vim image.py
+(base) [jmanley@v-gpu py_utils]$
+(base) [jmanley@v-gpu py_utils]$ ls
+image.py  __init__.py  inout.py  __pycache__
+(base) [jmanley@v-gpu py_utils]$ cd ..
+(base) [jmanley@v-gpu py_utils]$ ls
+LICENSE  py_utils  py_utils.egg-info  README.md  setup.py
+(base) [jmanley@v-gpu py_utils]$
+(base) [jmanley@v-gpu py_utils]$
+(base) [jmanley@v-gpu py_utils]$ ls
+LICENSE  py_utils  py_utils.egg-info  README.md  setup.py
+(base) [jmanley@v-gpu py_utils]$ cd py_utils
+(base) [jmanley@v-gpu py_utils]$ ls
+image.py  __init__.py  inout.py  __pycache__
+(base) [jmanley@v-gpu py_utils]$ vim signal.py
+(base) [jmanley@v-gpu py_utils]$ black *
+reformatted /ssd_icybox2_1TB/jason/Codes/py_utils/py_utils/signal.py
+All done! ✨ 🍰 ✨
+1 file reformatted, 3 files left unchanged.
+(base) [jmanley@v-gpu py_utils]$ ls
+image.py  __init__.py  inout.py  __pycache__  signal.py
+(base) [jmanley@v-gpu py_utils]$ vim inout.py
+
+[2]+  Stopped                 vim inout.py
+
+
+# Jupyter Notebook
+(base) [jmanley@v-gpu py_utils]$ vim inout.py
+(base) [jmanley@v-gpu py_utils]$ black *
+reformatted /ssd_icybox2_1TB/jason/Codes/py_utils/py_utils/inout.py
+All done! ✨ 🍰 ✨
+1 file reformatted, 3 files left unchanged.
+(base) [jmanley@v-gpu py_utils]$ vim inout.py
+(base) [jmanley@v-gpu py_utils]$
+(base) [jmanley@v-gpu py_utils]$ ls
+image.py  __init__.py  inout.py  __pycache__  signal.py
+(base) [jmanley@v-gpu py_utils]$ rm -r *.swp
+rm: cannot remove `*.swp': No such file or directory
+(base) [jmanley@v-gpu py_utils]$ vim inout.py
+(base) [jmanley@v-gpu py_utils]$
+(base) [jmanley@v-gpu py_utils]$
+(base) [jmanley@v-gpu py_utils]$ ls
+image.py  __init__.py  inout.py  __pycache__  signal.py
+(base) [jmanley@v-gpu py_utils]$ rm -r *.swp
+rm: cannot remove `*.swp': No such file or directory
+(base) [jmanley@v-gpu py_utils]$ rm .inout.py.swp
+(base) [jmanley@v-gpu py_utils]$ ls
+image.py  __init__.py  inout.py  __pycache__  signal.py
+(base) [jmanley@v-gpu py_utils]$ vim inout.py
+(base) [jmanley@v-gpu py_utils]$ vim signal.py
+(base) [jmanley@v-gpu py_utils]$ vim image.py
+(base) [jmanley@v-gpu py_utils]$
+(base) [jmanley@v-gpu py_utils]$
+(base) [jmanley@v-gpu py_utils]$ ls
+image.py  __init__.py  inout.py  __pycache__  signal.py
+(base) [jmanley@v-gpu py_utils]$ cd ..
+(base) [jmanley@v-gpu py_utils]$ ga
+(base) [jmanley@v-gpu py_utils]$ gc "begin image and signal processing"
+[master 706bb53] begin image and signal processing
+ 6 files changed, 169 insertions(+), 4 deletions(-)
+ create mode 100644 py_utils/.inout.py.swo
+ create mode 100644 py_utils/image.py
+ create mode 100644 py_utils/signal.py
+
+
+#!/usr/bin/env python3
+(base) [jmanley@v-gpu py_utils]$ gp
+Warning: Permanently added the RSA host key for IP address '140.82.114.3' to the list of known hosts.
+Counting objects: 14, done.
+Delta compression using up to 24 threads.
+Compressing objects: 100% (9/9), done.
+Writing objects: 100% (9/9), 4.09 KiB, done.
+Total 9 (delta 4), reused 0 (delta 0)
+remote: Resolving deltas: 100% (4/4), completed with 4 local objects.
+To git@github.com:jmmanley/py_utils.git
+   fb734bd..706bb53  master -> master
+(base) [jmanley@v-gpu py_utils]$ ls
+LICENSE  py_utils  py_utils.egg-info  README.md  setup.py
+(base) [jmanley@v-gpu py_utils]$ cd py_utils
+(base) [jmanley@v-gpu py_utils]$ rm .inout.py.swo
+(base) [jmanley@v-gpu py_utils]$ ls
+image.py  __init__.py  inout.py  __pycache__  signal.py
+(base) [jmanley@v-gpu py_utils]$ cd ..
+(base) [jmanley@v-gpu py_utils]$ ls
+
+
+import io
+LICENSE  py_utils  py_utils.egg-info  README.md  setup.py
+(base) [jmanley@v-gpu py_utils]$ vim .gitignore
+(base) [jmanley@v-gpu py_utils]$ black *
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from contextlib import redirect_stdout
+error: cannot format /ssd_icybox2_1TB/jason/Codes/py_utils/LICENSE: Cannot parse: 1:14: Copyright (c) 2019 Jason M. Manley
+All done! 💥 💔 💥
+6 files left unchanged, 1 file failed to reformat.
+(base) [jmanley@v-gpu py_utils]$ ls
+LICENSE  py_utils  py_utils.egg-info  README.md  setup.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from contextlib import redirect_stdout
+import deeplabcut
+
+from .common import natural_keys, make_process_fun
+
+
+def rename_dlc_files(folder, base):
+    files = glob(os.path.join(folder, base + "*"))
+    for fname in files:
+        basename = os.path.basename(fname)
+        _, ext = os.path.splitext(basename)
+        os.rename(os.path.join(folder, basename), os.path.join(folder, base + ext))
+
+
+def process_session(config, session_path, gpus=None):
+    pipeline_videos_raw = config["pipeline"]["videos_raw"]
+    pipeline_pose = config["pipeline"]["pose_2d"]
+
+    config_name = os.path.join(config["model_folder"], "config.yaml")
+
+    source_folder = os.path.join(session_path, pipeline_videos_raw)
+    outdir = os.path.join(session_path, pipeline_pose)
+
+    videos = glob(os.path.join(source_folder, "*.avi"))
+    videos = sorted(videos, key=natural_keys)
+
+    if len(videos) > 0:
+        os.makedirs(outdir, exist_ok=True)
+
+    n_gpu = len(gpus)
+
+    for video in videos:
+        basename = os.path.basename(video)
+        basename, ext = os.path.splitext(basename)
+
+        dataname = os.path.join(outdir, basename + ".h5")
+        print(dataname)
+        if os.path.exists(dataname):
+            continue
+        else:
+            trap = io.StringIO()
+            with redirect_stdout(trap):
+                deeplabcut.analyze_videos(
+                    config_name,
+                    [video],
+                    videotype=ext,
+                    save_as_csv=True,
+                    destfolder=outdir,
+                )
+            rename_dlc_files(outdir, basename)
+
+
+def process_gpu_batch(config_name, videos, gpu=None):
+
+    for video in videos:
+        basename = os.path.basename(video)
+        basename, ext = os.path.splitext(basename)
+
+        dataname = os.path.join(outdir, basename + ".h5")
+        print(dataname)
+        if os.path.exists(dataname):
+            continue
+        else:
+            trap = io.StringIO()
+            with redirect_stdout(trap):
+                deeplabcut.analyze_videos(
+                    config_name,
+                    [video],
+                    videotype=ext,
+                    save_as_csv=True,
+                    destfolder=outdir,
+                )
+Entering Ex mode.  Type "visual" to go to Normal mode.
+        rename_dlc_files(outdir, basename)
+:visual
+import deeplabcut
+(base) [jmanley@v-gpu py_utils]$ cd py_utils
+(base) [jmanley@v-gpu py_utils]$ ls
+image.py  __init__.py  inout.py  __pycache__  signal.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(base) [jmanley@v-gpu py_utils]$ black *
+All done! ✨ 🍰 ✨
+
+
+#!/usr/bin/env python3
+4 files left unchanged.
+(base) [jmanley@v-gpu py_utils]$ cd ..
+(base) [jmanley@v-gpu py_utils]$ ls
+LICENSE  py_utils  py_utils.egg-info  README.md  setup.py
+(base) [jmanley@v-gpu py_utils]$
+(base) [jmanley@v-gpu py_utils]$ packet_write_wait: Connection to 129.85.3.28 port 22: Broken pipe
+Jasons-MacBook-Pro:~ jason$ gpu
+
+
+#!/usr/bin/env python3
+Last login: Wed Jul 17 09:23:48 2019 from 129.85.11.244
+-bash-4.1$ source ~/.bashrc
+(base) [jmanley@v-gpu ~]$ codes
+(base) [jmanley@v-gpu vaziri-codes]$ ls
+anesthesia_analysis  IIT   neuron_dropout       pca_ica_pilot_analysis  unused_packages  visual_stimuli
+behavior_tracking    misc  parfor_progress.txt  README.md               utilities
+(base) [jmanley@v-gpu vaziri-codes]$ cd ..
+(base) [jmanley@v-gpu Codes]$ ls
+dPCA              lfm_cluster         matlab-schemer       RUN                    vaziri-codes
+fontconfig        LFM_Reconstruction  optimal_encoding     test_pca_gpu_vs_cpu.m  workflow
+ica               lfrecon_vsc         parfor_progress.txt  untitled folder        Zebrafish-Tracking
+icamatlabcluster  MATLAB              py_utils             util
+(base) [jmanley@v-gpu Codes]$ git clone https://github.com/jmmanley/anipose
+Cloning into 'anipose'...
+remote: Enumerating objects: 176, done.
+remote: Counting objects: 100% (176/176), done.
+remote: Compressing objects: 100% (101/101), done.
+remote: Total 870 (delta 119), reused 124 (delta 74), pack-reused 694
+Receiving objects: 100% (870/870), 190.21 KiB, done.
+Resolving deltas: 100% (583/583), done.
+(base) [jmanley@v-gpu Codes]$ ls
+anipose     icamatlabcluster    MATLAB               py_utils               util
+dPCA        lfm_cluster         matlab-schemer       RUN                    vaziri-codes
+fontconfig  LFM_Reconstruction  optimal_encoding     test_pca_gpu_vs_cpu.m  workflow
+
+
+ica         lfrecon_vsc         parfor_progress.txt  untitled folder        Zebrafish-Tracking
+(base) [jmanley@v-gpu Codes]$ cd anipose/
+(base) [jmanley@v-gpu anipose]$ ls
+anipose  config.toml  docs  LICENSE  README.md  release.sh  setup.py
+(base) [jmanley@v-gpu anipose]$ cd anipose/
+(base) [jmanley@v-gpu anipose]$ ls
+anipose.py               calibration_errors.py  filter_pose.py     label_videos_3d.py  summarize.py
+calibrate_extrinsics.py  common.py              __init__.py        label_videos.py     triangulate.py
+calibrate_intrinsics.py  compute_angles.py      label_combined.py  pose_videos.py
+(base) [jmanley@v-gpu anipose]$ vim pose_videos.py
+(base) [jmanley@v-gpu anipose]$ black *
+
+
 project = "flypose"
 path = "/media/beast/pierre/flywalk-pipeline-go/test2"
 model_folder = "/home/tuthill/pierre/flypose-test-Pierre-2018-12-10"
@@ -18,13 +552,13 @@ board_marker_bits = 4
 board_marker_dict_number = 50
 
 # length of marker side
-board_marker_length = 0.375 # mm
+board_marker_length = 0.375  # mm
 
 # If aruco, length of marker separation
 # board_marker_separation_length = 1 # mm
 
 # If charuco or checkerboard, square side length
-board_square_side_length = 0.5 # mm
+board_square_side_length = 0.5  # mm
 
 animal_calibration = False
 
@@ -37,17 +571,14 @@ spline = true
 
 [labeling]
 scheme = [
-    ['L1A', 'L1B', 'L1C', 'L1D', 'L1E'],
-    ['L2A', 'L2B', 'L2C', 'L2D', 'L2E'],
-    ['L3A', 'L3B', 'L3C', 'L3D', 'L3E']
+    ["L1A", "L1B", "L1C", "L1D", "L1E"],
+    ["L2A", "L2B", "L2C", "L2D", "L2E"],
+    ["L3A", "L3B", "L3C", "L3D", "L3E"],
 ]
 
 [triangulation]
-cam_regex = '_([A-Z])$'
-axes = [
-    ["x", "L1A", "L3A"],
-    ["z", "L1B", "L1A"]
-]
+cam_regex = "_([A-Z])$"
+axes = [["x", "L1A", "L3A"], ["z", "L1B", "L1A"]]
 reference_point = "L1A"
 cam_align = "C"
 
@@ -73,3 +604,4 @@ offset = [224, 230, 800, 700]
 
 [cameras.C]
 offset = [160, 250, 864, 700]
+-- INSERT --                                                                                             1,2           All

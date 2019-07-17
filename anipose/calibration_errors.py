@@ -9,19 +9,31 @@ from glob import glob
 from collections import defaultdict
 import pandas as pd
 
-from .common import \
-    get_calibration_board, get_board_type, \
-    find_calibration_folder, make_process_fun, \
-    get_cam_name, get_video_name, load_intrinsics, load_extrinsics
-from .triangulate import triangulate_optim, triangulate_simple, \
-    reprojection_error, reprojection_error_und
+from .common import (
+    get_calibration_board,
+    get_board_type,
+    find_calibration_folder,
+    make_process_fun,
+    get_cam_name,
+    get_video_name,
+    load_intrinsics,
+    load_extrinsics,
+)
+from .triangulate import (
+    triangulate_optim,
+    triangulate_simple,
+    reprojection_error,
+    reprojection_error_und,
+)
 from .calibrate_extrinsics import detect_aruco, estimate_pose, fill_points
 
+
 def expand_matrix(mtx):
-    z = np.zeros((4,4))
-    z[0:3,0:3] = mtx[0:3,0:3]
-    z[3,3] = 1
+    z = np.zeros((4, 4))
+    z[0:3, 0:3] = mtx[0:3, 0:3]
+    z[3, 3] = 1
     return z
+
 
 def process_trig_errors(config, fname_dict, cam_intrinsics, extrinsics, skip=20):
     minlen = np.inf
@@ -40,7 +52,7 @@ def process_trig_errors(config, fname_dict, cam_intrinsics, extrinsics, skip=20)
     cam_mats_dist = []
     for cname in cam_names:
         mat = np.array(extrinsics[cname])
-        left = np.array(cam_intrinsics[cname]['camera_mat'])
+        left = np.array(cam_intrinsics[cname]["camera_mat"])
         cam_mats.append(mat)
         cam_mats_dist.append(left)
 
@@ -52,7 +64,7 @@ def process_trig_errors(config, fname_dict, cam_intrinsics, extrinsics, skip=20)
     framenums = []
     all_rvecs = []
     all_tvecs = []
-    for framenum in trange(minlen, desc='detecting', ncols=70):
+    for framenum in trange(minlen, desc="detecting", ncols=70):
         row = []
         rvecs = []
         tvecs = []
@@ -74,15 +86,16 @@ def process_trig_errors(config, fname_dict, cam_intrinsics, extrinsics, skip=20)
                 tvec = tvec.flatten()
             else:
                 corners = ids = None
-                rvec = np.zeros(3)*np.nan
-                tvec = np.zeros(3)*np.nan
+                rvec = np.zeros(3) * np.nan
+                tvec = np.zeros(3) * np.nan
 
             points = fill_points(corners, ids, board)
             points_flat = points.reshape(-1, 1, 2)
             points_new = cv2.undistortPoints(
                 points_flat,
-                np.array(intrinsics['camera_mat']),
-                np.array(intrinsics['dist_coeff']))
+                np.array(intrinsics["camera_mat"]),
+                np.array(intrinsics["dist_coeff"]),
+            )
 
             row.append(points_new.reshape(points.shape))
             rvecs.append(rvec)
@@ -95,7 +108,7 @@ def process_trig_errors(config, fname_dict, cam_intrinsics, extrinsics, skip=20)
             framenums.append(framenum)
             go = skip
 
-        go = max(0, go-1)
+        go = max(0, go - 1)
 
     all_points_raw = np.array(all_points)
     all_rvecs = np.array(all_rvecs)
@@ -113,7 +126,7 @@ def process_trig_errors(config, fname_dict, cam_intrinsics, extrinsics, skip=20)
     errors = np.zeros((shape[0], shape[2]))
     errors.fill(np.nan)
 
-    for i in trange(all_points_raw.shape[0], desc='triangulating', ncols=70):
+    for i in trange(all_points_raw.shape[0], desc="triangulating", ncols=70):
         for j in range(all_points_raw.shape[2]):
             pts = all_points_raw[i, :, j, :]
             good = ~np.isnan(pts[:, 0])
@@ -121,47 +134,46 @@ def process_trig_errors(config, fname_dict, cam_intrinsics, extrinsics, skip=20)
                 # p3d = triangulate_optim(pts, cam_mats)
                 p3d = triangulate_simple(pts[good], cam_mats[good])
                 all_points_3d[i, j] = p3d[:3]
-                errors[i,j] = reprojection_error_und(p3d, pts[good], cam_mats[good], cam_mats_dist[good])
-                num_cams[i,j] = np.sum(good)
+                errors[i, j] = reprojection_error_und(
+                    p3d, pts[good], cam_mats[good], cam_mats_dist[good]
+                )
+                num_cams[i, j] = np.sum(good)
 
     ## all_tvecs
     # framenum, camera num, axis
 
     dout = pd.DataFrame()
     for bp_num in range(shape[2]):
-        bp = 'corner_{}'.format(bp_num)
-        for ax_num, axis in enumerate(['x','y','z']):
-            dout[bp + '_' + axis] = all_points_3d[:, bp_num, ax_num]
-        dout[bp + '_error'] = errors[:, bp_num]
-        dout[bp + '_ncams'] = num_cams[:, bp_num]
+        bp = "corner_{}".format(bp_num)
+        for ax_num, axis in enumerate(["x", "y", "z"]):
+            dout[bp + "_" + axis] = all_points_3d[:, bp_num, ax_num]
+        dout[bp + "_error"] = errors[:, bp_num]
+        dout[bp + "_ncams"] = num_cams[:, bp_num]
 
     for cam_num in range(shape[1]):
         cname = cam_names[cam_num]
-        for ax_num, axis in enumerate(['x','y','z']):
-            key = 'cam_{}_r{}'.format(cname, axis)
+        for ax_num, axis in enumerate(["x", "y", "z"]):
+            key = "cam_{}_r{}".format(cname, axis)
             dout[key] = all_rvecs[:, cam_num, ax_num]
-            key = 'cam_{}_t{}'.format(cname, axis)
+            key = "cam_{}_t{}".format(cname, axis)
             dout[key] = all_tvecs[:, cam_num, ax_num]
 
-    dout['fnum'] = framenums
+    dout["fnum"] = framenums
 
     return dout
 
 
-
 def process_session(config, session_path):
     # pipeline_videos_raw = config['pipeline']['videos_raw']
-    pipeline_calibration_videos = config['pipeline']['calibration_videos']
-    pipeline_calibration_results = config['pipeline']['calibration_results']
+    pipeline_calibration_videos = config["pipeline"]["calibration_videos"]
+    pipeline_calibration_results = config["pipeline"]["calibration_results"]
 
     calibration_path = find_calibration_folder(config, session_path)
 
     if calibration_path is None:
         return
 
-    videos = glob(os.path.join(calibration_path,
-                               pipeline_calibration_videos,
-                               '*.avi'))
+    videos = glob(os.path.join(calibration_path, pipeline_calibration_videos, "*.avi"))
     videos = sorted(videos)
 
     cam_videos = defaultdict(list)
@@ -190,7 +202,7 @@ def process_session(config, session_path):
         fname_dicts[name] = fname_dict
 
     for vidname, fd in fname_dicts.items():
-        outname_base = vidname + '.csv'
+        outname_base = vidname + ".csv"
         outname = os.path.join(outdir, outname_base)
 
         if os.path.exists(outname):

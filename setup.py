@@ -18,26 +18,21 @@ setuptools.setup(
         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering",
-        "Topic :: Scientific/Engineering :: Image Recognition"
+        "Topic :: Scientific/Engineering :: Image Recognition",
     ],
-    entry_points={
-        'console_scripts': ['anipose=anipose.anipose:cli']
-    },
+    entry_points={"console_scripts": ["anipose=anipose.anipose:cli"]},
     install_requires=[
-        'deeplabcut>=2.0.4.1',
-        'opencv-python',
-        'opencv-contrib-python',
-        'toml',
-        'numpy',
-        'scipy',
-        'pandas',
-        'tqdm',
-        'click',
-        'scikit-video',
-        'checkerboard'
+        "deeplabcut>=2.0.4.1",
+        "opencv-python",
+        "opencv-contrib-python",
+        "toml",
+        "numpy",
+        "scipy",
+        "pandas",
+        "tqdm",
+        "click",
+        "scikit-video",
+        "checkerboard",
     ],
-    extras_require={
-        'viz':  ["mayavi"]
-    }
-
+    extras_require={"viz": ["mayavi"]},
 )

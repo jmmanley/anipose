@@ -12,16 +12,23 @@ from glob import glob
 from scipy import optimize
 import cv2
 
-from .common import make_process_fun, find_calibration_folder, \
-    get_video_name, get_cam_name, natural_keys, \
-    load_intrinsics, load_extrinsics
+from .common import (
+    make_process_fun,
+    find_calibration_folder,
+    get_video_name,
+    get_cam_name,
+    natural_keys,
+    load_intrinsics,
+    load_extrinsics,
+)
 
 
 def expand_matrix(mtx):
-    z = np.zeros((4,4))
-    z[0:3,0:3] = mtx[0:3,0:3]
-    z[3,3] = 1
+    z = np.zeros((4, 4))
+    z[0:3, 0:3] = mtx[0:3, 0:3]
+    z[3, 3] = 1
     return z
+
 
 def reproject_points(p3d, points2d, camera_mats):
     proj = np.dot(camera_mats, p3d)
@@ -45,6 +52,7 @@ def distort_points_cams(points, camera_mats):
         out.append(new)
     return np.array(out)
 
+
 def reprojection_error_und(p3d, points2d, camera_mats, camera_mats_dist):
     proj = np.dot(camera_mats, p3d)
     proj = proj[:, :2] / proj[:, 2, None]
@@ -53,18 +61,20 @@ def reprojection_error_und(p3d, points2d, camera_mats, camera_mats_dist):
     errors = np.linalg.norm(proj_d - points2d_d, axis=1)
     return np.mean(errors)
 
+
 def triangulate_simple(points, camera_mats):
     num_cams = len(camera_mats)
-    A = np.zeros((num_cams*2, 4))
+    A = np.zeros((num_cams * 2, 4))
     for i in range(num_cams):
         x, y = points[i]
         mat = camera_mats[i]
-        A[(i*2):(i*2+1)] = x*mat[2]-mat[0]
-        A[(i*2+1):(i*2+2)] = y*mat[2]-mat[1]
+        A[(i * 2) : (i * 2 + 1)] = x * mat[2] - mat[0]
+        A[(i * 2 + 1) : (i * 2 + 2)] = y * mat[2] - mat[1]
     u, s, vh = np.linalg.svd(A, full_matrices=True)
     p3d = vh[-1]
     p3d = p3d / p3d[3]
     return p3d
+
 
 def triangulate_points(the_points, cam_mats):
     p3ds = []
@@ -80,6 +90,7 @@ def triangulate_points(the_points, cam_mats):
     errors = np.array(errors)
     return p3ds, errors
 
+
 def optim_error_fun(points, camera_mats):
     def fun(x):
         p3d = np.array([x[0], x[1], x[2], 1])
@@ -87,6 +98,7 @@ def optim_error_fun(points, camera_mats):
         resid = points - proj[:, :2] / proj[:, 2, None]
         return resid.flatten()
         # return np.linalg.norm(resid, axis=1)
+
     return fun
 
 
@@ -95,11 +107,11 @@ def triangulate_optim(points, camera_mats, max_error=20):
         p3d = triangulate_simple(points, camera_mats)
         error = reprojection_error(p3d, points, camera_mats)
     except np.linalg.linalg.LinAlgError:
-        return np.array([0,0,0,0])
+        return np.array([0, 0, 0, 0])
 
     fun = optim_error_fun(points, camera_mats)
     try:
-        res = optimize.least_squares(fun, p3d[:3], loss='huber', f_scale=1e-3)
+        res = optimize.least_squares(fun, p3d[:3], loss="huber", f_scale=1e-3)
         x = res.x
         p3d = np.array([x[0], x[1], x[2], 1])
     except ValueError:
@@ -110,11 +122,13 @@ def triangulate_optim(points, camera_mats, max_error=20):
 
 def proj(u, v):
     """Project u onto v"""
-    return u * np.dot(v,u) / np.dot(u,u)
+    return u * np.dot(v, u) / np.dot(u, u)
+
 
 def ortho(u, v):
     """Orthagonalize u with respect to v"""
     return u - proj(v, u)
+
 
 def get_median(all_points_3d, ix):
     pts = all_points_3d[:, ix]
@@ -125,10 +139,10 @@ def get_median(all_points_3d, ix):
 def correct_coordinate_frame(config, all_points_3d, bodyparts):
     """Given a config and a set of points and bodypart names, this function will rotate the coordinate frame to match the one in config"""
     bp_index = dict(zip(bodyparts, range(len(bodyparts))))
-    axes_mapping = dict(zip('xyz', range(3)))
+    axes_mapping = dict(zip("xyz", range(3)))
 
-    ref_point = config['triangulation']['reference_point']
-    axes_spec = config['triangulation']['axes']
+    ref_point = config["triangulation"]["reference_point"]
+    axes_spec = config["triangulation"]["axes"]
     a_dirx, a_l, a_r = axes_spec[0]
     b_dirx, b_l, b_r = axes_spec[1]
 
@@ -136,7 +150,7 @@ def correct_coordinate_frame(config, all_points_3d, bodyparts):
     b_dir = axes_mapping[b_dirx]
 
     ## find the missing direction
-    done = np.zeros(3, dtype='bool')
+    done = np.zeros(3, dtype="bool")
     done[a_dir] = True
     done[b_dir] = True
     c_dir = np.where(~done)[0][0]
@@ -149,12 +163,12 @@ def correct_coordinate_frame(config, all_points_3d, bodyparts):
     a_diff = a_rv - a_lv
     b_diff = ortho(b_rv - b_lv, a_diff)
 
-    M = np.zeros((3,3))
+    M = np.zeros((3, 3))
     M[a_dir] = a_diff
     M[b_dir] = b_diff
     M[c_dir] = np.cross(a_diff, b_diff)
 
-    M /= np.linalg.norm(M, axis=1)[:,None]
+    M /= np.linalg.norm(M, axis=1)[:, None]
 
     center = get_median(all_points_3d, bp_index[ref_point])
 
@@ -164,13 +178,14 @@ def correct_coordinate_frame(config, all_points_3d, bodyparts):
 
     return all_points_3d_adj
 
+
 def load_pose2d_fnames(fname_dict, offsets_dict):
     cam_names, pose_names = list(zip(*sorted(fname_dict.items())))
 
     maxlen = 0
     for pose_name in pose_names:
         dd = pd.read_hdf(pose_name)
-        length = max(dd.index)+1
+        length = max(dd.index) + 1
         maxlen = max(maxlen, length)
 
     length = maxlen
@@ -184,8 +199,7 @@ def load_pose2d_fnames(fname_dict, offsets_dict):
     all_points_raw = np.zeros((length, len(cam_names), len(bodyparts), 2))
     all_scores = np.zeros((length, len(cam_names), len(bodyparts)))
 
-    for ix_cam, (cam_name, pose_name) in \
-            enumerate(zip(cam_names, pose_names)):
+    for ix_cam, (cam_name, pose_name) in enumerate(zip(cam_names, pose_names)):
         dd = pd.read_hdf(pose_name)
         scorer = dd.columns.levels[0][0]
         dd = dd[scorer]
@@ -197,11 +211,12 @@ def load_pose2d_fnames(fname_dict, offsets_dict):
             all_scores[index, ix_cam, ix_bp] = X[:, 2]
 
     return {
-        'cam_names': cam_names,
-        'points': all_points_raw,
-        'scores': all_scores,
-        'bodyparts': bodyparts
+        "cam_names": cam_names,
+        "points": all_points_raw,
+        "scores": all_scores,
+        "bodyparts": bodyparts,
     }
+
 
 def load_offsets_dict(config, cam_names, video_folder):
     ## TODO: make the recorder.toml file configurable
@@ -219,11 +234,11 @@ def load_offsets_dict(config, cam_names, video_folder):
     offsets_dict = dict()
     for cname in cam_names:
         # if record_dict is None:
-        if 'cameras' not in config or cname not in config['cameras']:
+        if "cameras" not in config or cname not in config["cameras"]:
             # print("W: no crop window found for camera {}, assuming no crop".format(cname))
             offsets_dict[cname] = [0, 0]
         else:
-            offsets_dict[cname] = config['cameras'][cname]['offset']
+            offsets_dict[cname] = config["cameras"][cname]["offset"]
         # else:
         #     offsets_dict[cname] = record_dict['cameras'][cname]['video']['ROIPosition']
 
@@ -237,16 +252,16 @@ def undistort_points(all_points_raw, cam_names, intrinsics):
         calib = intrinsics[cam_name]
         points = all_points_raw[:, ix_cam].reshape(-1, 1, 2)
         points_new = cv2.undistortPoints(
-            points, arr(calib['camera_mat']), arr(calib['dist_coeff']))
-        all_points_und[:, ix_cam] = points_new.reshape(
-            all_points_raw[:, ix_cam].shape)
+            points, arr(calib["camera_mat"]), arr(calib["dist_coeff"])
+        )
+        all_points_und[:, ix_cam] = points_new.reshape(all_points_raw[:, ix_cam].shape)
 
     return all_points_und
 
 
-def triangulate(config,
-                calib_folder, video_folder, pose_folder,
-                fname_dict, output_fname):
+def triangulate(
+    config, calib_folder, video_folder, pose_folder, fname_dict, output_fname
+):
 
     cam_names = sorted(fname_dict.keys())
 
@@ -260,7 +275,7 @@ def triangulate(config,
 
     for cname in cam_names:
         mat = arr(extrinsics[cname])
-        left = arr(intrinsics[cname]['camera_mat'])
+        left = arr(intrinsics[cname]["camera_mat"])
         cam_mats.append(mat)
         cam_mats_dist.append(left)
 
@@ -268,9 +283,9 @@ def triangulate(config,
     cam_mats_dist = arr(cam_mats_dist)
 
     out = load_pose2d_fnames(fname_dict, offsets_dict)
-    all_points_raw = out['points']
-    all_scores = out['scores']
-    bodyparts = out['bodyparts']
+    all_points_raw = out["points"]
+    all_scores = out["scores"]
+    bodyparts = out["bodyparts"]
 
     # frame, camera, bodypart, xy
     all_points_und = undistort_points(all_points_raw, cam_names, intrinsics)
@@ -302,40 +317,45 @@ def triangulate(config,
                 # p3d = triangulate_optim(pts[good], cam_mats[good])
                 p3d = triangulate_simple(pts[good], cam_mats[good])
                 all_points_3d[i, j] = p3d[:3]
-                errors[i,j] = reprojection_error_und(p3d, pts[good], cam_mats[good], cam_mats_dist[good])
-                num_cams[i,j] = np.sum(good)
-                scores_3d[i,j] = np.min(all_scores[i, :, j][good])
+                errors[i, j] = reprojection_error_und(
+                    p3d, pts[good], cam_mats[good], cam_mats_dist[good]
+                )
+                num_cams[i, j] = np.sum(good)
+                scores_3d[i, j] = np.min(all_scores[i, :, j][good])
 
-    if 'reference_point' in config['triangulation'] and 'axes' in config['triangulation']:
+    if (
+        "reference_point" in config["triangulation"]
+        and "axes" in config["triangulation"]
+    ):
         all_points_3d_adj = correct_coordinate_frame(config, all_points_3d, bodyparts)
     else:
         all_points_3d_adj = all_points_3d
 
     dout = pd.DataFrame()
     for bp_num, bp in enumerate(bodyparts):
-        for ax_num, axis in enumerate(['x','y','z']):
-            dout[bp + '_' + axis] = all_points_3d_adj[:, bp_num, ax_num]
-        dout[bp + '_error'] = errors[:, bp_num]
-        dout[bp + '_ncams'] = num_cams[:, bp_num]
-        dout[bp + '_score'] = scores_3d[:, bp_num]
+        for ax_num, axis in enumerate(["x", "y", "z"]):
+            dout[bp + "_" + axis] = all_points_3d_adj[:, bp_num, ax_num]
+        dout[bp + "_error"] = errors[:, bp_num]
+        dout[bp + "_ncams"] = num_cams[:, bp_num]
+        dout[bp + "_score"] = scores_3d[:, bp_num]
 
-    dout['fnum'] = np.arange(length)
+    dout["fnum"] = np.arange(length)
 
     dout.to_csv(output_fname, index=False)
 
 
 def process_session(config, session_path):
-    pipeline_videos_raw = config['pipeline']['videos_raw']
-    pipeline_calibration_results = config['pipeline']['calibration_results']
-    pipeline_pose = config['pipeline']['pose_2d']
-    pipeline_pose_filter = config['pipeline']['pose_2d_filter']
-    pipeline_3d = config['pipeline']['pose_3d']
+    pipeline_videos_raw = config["pipeline"]["videos_raw"]
+    pipeline_calibration_results = config["pipeline"]["calibration_results"]
+    pipeline_pose = config["pipeline"]["pose_2d"]
+    pipeline_pose_filter = config["pipeline"]["pose_2d_filter"]
+    pipeline_3d = config["pipeline"]["pose_3d"]
 
     calibration_path = find_calibration_folder(config, session_path)
     if calibration_path is None:
         return
 
-    if config['filter']['enabled']:
+    if config["filter"]["enabled"]:
         pose_folder = os.path.join(session_path, pipeline_pose_filter)
     else:
         pose_folder = os.path.join(session_path, pipeline_pose)
@@ -344,7 +364,7 @@ def process_session(config, session_path):
     video_folder = os.path.join(session_path, pipeline_videos_raw)
     output_folder = os.path.join(session_path, pipeline_3d)
 
-    pose_files = glob(os.path.join(pose_folder, '*.h5'))
+    pose_files = glob(os.path.join(pose_folder, "*.h5"))
 
     cam_videos = defaultdict(list)
 
@@ -364,14 +384,14 @@ def process_session(config, session_path):
         cam_names = [get_cam_name(config, f) for f in fnames]
         fname_dict = dict(zip(cam_names, fnames))
 
-        output_fname = os.path.join(output_folder, name + '.csv')
+        output_fname = os.path.join(output_folder, name + ".csv")
 
         if os.path.exists(output_fname):
             continue
 
-        triangulate(config,
-                    calib_folder, video_folder, pose_folder,
-                    fname_dict, output_fname)
+        triangulate(
+            config, calib_folder, video_folder, pose_folder, fname_dict, output_fname
+        )
 
 
 triangulate_all = make_process_fun(process_session)
