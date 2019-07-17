@@ -22,7 +22,8 @@ DEFAULT_CONFIG = {
         "angles": "angles",
         "summaries": "summaries",
         "videos_combined": "videos-combined",
-        "gpus": "0,1,2",
+        "gpus": 0,
+        "npool": 1,
     },
     "filter": {
         "enabled": False,
@@ -31,6 +32,7 @@ DEFAULT_CONFIG = {
         "score_threshold": 0.8,
         "spline": True,
     },
+    "labeling": {"dot_size": 7},
 }
 
 

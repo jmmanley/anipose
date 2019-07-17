@@ -10,6 +10,9 @@ from tqdm import trange
 
 from matplotlib.pyplot import get_cmap
 
+from multiprocessing import Pool
+from itertools import repeat
+
 from .common import make_process_fun, natural_keys
 
 
@@ -53,6 +56,8 @@ def visualize_labels(config, labels_fname, vid_fname, outname):
         scheme = config["labeling"]["scheme"]
     except KeyError:
         scheme = []
+
+    dot_size = config["labeling"]["dot_size"]
 
     dlabs = pd.read_hdf(labels_fname)
     if len(dlabs.columns.levels) > 2:
@@ -112,7 +117,7 @@ def visualize_labels(config, labels_fname, vid_fname, outname):
             y = int(round(y))
             col = cmap(lnum % 10, bytes=True)
             col = [int(c) for c in col]
-            cv2.circle(img, (x, y), 7, col[:3], -1)
+            cv2.circle(img, (x, y), dot_size, col[:3], -1)
 
         writer.writeFrame(img)
 
@@ -131,6 +136,9 @@ def process_session(config, session_path, filtered=False):
 
     print(session_path)
 
+    n_pool = config["pipeline"]["npool"]
+
+    print(n_pool)
     labels_fnames = glob(os.path.join(session_path, pipeline_pose, "*.h5"))
     labels_fnames = sorted(labels_fnames, key=natural_keys)
 
@@ -138,6 +146,10 @@ def process_session(config, session_path, filtered=False):
 
     if len(labels_fnames) > 0:
         os.makedirs(outdir, exist_ok=True)
+
+    fnames = []
+    vidnames = []
+    out_fnames = []
 
     for fname in labels_fnames:
         basename = os.path.basename(fname)
@@ -152,9 +164,13 @@ def process_session(config, session_path, filtered=False):
                 and abs(get_nframes(out_fname) - get_nframes(vidname)) < 100
             ):
                 continue
-            print(out_fname)
 
-            visualize_labels(config, fname, vidname, out_fname)
+            fnames.append(fname)
+            vidnames.append(vidname)
+            out_fnames.append(out_fname)
+
+    with Pool(n_pool) as p:
+        p.starmap(visualize_labels, zip(repeat(config), fnames, vidnames, out_fnames))
 
 
 label_videos_all = make_process_fun(process_session, filtered=False)
