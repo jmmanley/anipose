@@ -67,17 +67,19 @@ def true_basename(fname):
 
 
 def get_cam_name(config, fname):
-    basename = true_basename(fname)
+    try:
+        basename = true_basename(fname)
 
-    cam_regex = config["triangulation"]["cam_regex"]
-    match = re.search(cam_regex, basename)
+        cam_regex = config["triangulation"]["cam_regex"]
+        match = re.search(cam_regex, basename)
 
-    if not match:
+        if not match:
+            return None
+        else:
+            name = match.groups()[0]
+            return name.strip()
+    except:
         return None
-    else:
-        name = match.groups()[0]
-        return name.strip()
-
 
 def get_video_name(config, fname):
     basename = true_basename(fname)

@@ -4,6 +4,7 @@ import os
 import os.path
 import toml
 import click
+import time
 
 pass_config = click.make_pass_decorator(dict)
 
@@ -34,6 +35,8 @@ DEFAULT_CONFIG = {
     },
     "labeling": {"dot_size": 7},
 }
+
+pause_time = 300
 
 
 def full_path(path):
@@ -129,9 +132,14 @@ def calibration_errors(config):
 @pass_config
 def analyze(config):
     from .pose_videos import pose_videos_all
+    from .filter_pose import filter_pose_all
 
     click.echo("Analyzing videos...")
-    pose_videos_all(config)
+
+    while True:
+        pose_videos_all(config)
+        filter_pose_all(config)
+        time.sleep(pause_time)
 
 
 @cli.command()
@@ -208,9 +216,21 @@ def label_2d(config):
 @pass_config
 def label_2d_filter(config):
     from .label_videos import label_videos_filtered_all
+    from .summarize import summarize_pose2d, summarize_pose2d_filtered, summarize_errors
 
-    click.echo("Labeling videos in 2D...")
-    label_videos_filtered_all(config)
+    click.echo("Labeling (and summarizing) videos in 2D...")
+
+    while True:
+        summarize_pose2d(config)
+
+        if config["filter"]["enabled"]:
+            summarize_pose2d_filtered(config)
+
+        summarize_errors(config)
+
+        label_videos_filtered_all(config)
+
+        time.sleep(pause_time)
 
 
 @cli.command()
