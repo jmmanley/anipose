@@ -27,8 +27,13 @@ def rename_dlc_files(folder, base):
 def process_session(config, session_path):
     pipeline_videos_raw = config["pipeline"]["videos_raw"]
     pipeline_pose = config["pipeline"]["pose_2d"]
-
-    gpus = [int(x) for x in config["pipeline"]["gpus"].split(",")]
+    
+    try:
+        gpus = [int(x) for x in config["pipeline"]["gpus"].split(",")]
+        n_gpus = len(gpus)
+    except:
+        gpus = None
+        n_gpus = 1
 
     config_name = os.path.join(config["model_folder"], "config.yaml")
 
@@ -40,9 +45,7 @@ def process_session(config, session_path):
 
     if len(videos) > 0:
         os.makedirs(outdir, exist_ok=True)
-
-    n_gpus = len(gpus)
-
+    
     videos_in_chunks = np.array_split(videos, n_gpus)
 
     with Pool(n_gpus) as p:
