@@ -70,14 +70,12 @@ def visualize_labels(config, labels_fname, vid_fname, outname):
 
     fps = cap.get(cv2.CAP_PROP_FPS)
 
-    writer = skvideo.io.FFmpegWriter(
-        outname,
-        inputdict={
-            # '-hwaccel': 'auto',
-            "-framerate": str(fps)
-        },
-        outputdict={"-vcodec": "h264", "-qp": "30"},
-    )
+    writer = skvideo.io.FFmpegWriter(outname, inputdict={
+        # '-hwaccel': 'auto',
+        '-framerate': str(fps),
+    }, outputdict={
+        '-vcodec': 'h264', '-qp': '30'
+    })
 
     last = len(dlabs)
 
@@ -117,8 +115,10 @@ def visualize_labels(config, labels_fname, vid_fname, outname):
             y = int(round(y))
             col = cmap(lnum % 10, bytes=True)
             col = [int(c) for c in col]
-            cv2.circle(img, (x, y), dot_size, col[:3], -1)
-
+            try:
+                cv2.circle(img, (x, y), dot_size, col[:3], -1)
+            except:
+                pass
         writer.writeFrame(img)
 
     cap.release()
@@ -167,7 +167,9 @@ def process_session(config, session_path, filtered=False):
             fnames.append(fname)
             vidnames.append(vidname)
             out_fnames.append(out_fname)
-
+    
+    #for i in range(len(fnames)):
+    #    visualize_labels(config, fnames[i], vidnames[i], out_fnames[i])
     with Pool(n_pool) as p:
         p.starmap(visualize_labels, zip(repeat(config), fnames, vidnames, out_fnames))
 

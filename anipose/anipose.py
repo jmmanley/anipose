@@ -138,7 +138,6 @@ def analyze(config):
 
     while True:
         pose_videos_all(config)
-        filter_pose_all(config)
         time.sleep(pause_time)
 
 
@@ -146,7 +145,7 @@ def analyze(config):
 @pass_config
 def filter(config):
     from .filter_pose import filter_pose_all
-
+    
     click.echo("Filtering tracked points...")
     filter_pose_all(config)
 
@@ -217,19 +216,21 @@ def label_2d(config):
 def label_2d_filter(config):
     from .label_videos import label_videos_filtered_all
     from .summarize import summarize_pose2d, summarize_pose2d_filtered, summarize_errors
+    from .filter_pose import filter_pose_all
 
     click.echo("Labeling (and summarizing) videos in 2D...")
 
     while True:
         summarize_pose2d(config)
-
+    
         if config["filter"]["enabled"]:
+            filter_pose_all(config)
             summarize_pose2d_filtered(config)
 
         summarize_errors(config)
-
+    
         label_videos_filtered_all(config)
-
+     
         time.sleep(pause_time)
 
 
@@ -336,6 +337,68 @@ def run_all(config):
         label_videos_all(config)
     click.echo("Labeling videos in 3D...")
     label_videos_3d_all(config)
+
+
+@cli.command()
+@pass_config
+def check_progress(config):
+    for i in range(3): print()
+    print('Project:', config["project"])
+    print()
+    _check_progress(config)
+   
+def __check_progress(config, session_path):
+    from glob import glob
+    from .common import natural_keys, get_nframes
+
+    pipeline_videos_raw = config['pipeline']['videos_raw']
+    pipeline_pose = config['pipeline']['pose_2d']
+
+    config_name = os.path.join(config['model_folder'], 'config.yaml')
+
+    source_folder = os.path.join(session_path, pipeline_videos_raw)
+    outdir = os.path.join(session_path, pipeline_pose)
+
+    videos = glob(os.path.join(source_folder, '*.avi'))
+    videos = sorted(videos, key=natural_keys)
+    
+    n_analyzed = 0
+    n_labeled  = 0
+
+    for video in videos:
+        basename = os.path.basename(video)
+        basename, ext = os.path.splitext(basename)
+        
+        dataname = os.path.join(outdir, basename + '.h5')
+        
+        if os.path.exists(dataname):   
+            n_analyzed += 1
+    
+    pipeline_videos_labeled = config['pipeline']['videos_labeled_2d_filter']
+    pipeline_pose = config['pipeline']['pose_2d_filter']
+
+    labels_fnames = glob(os.path.join(session_path, pipeline_pose, '*.h5'))
+    labels_fnames = sorted(labels_fnames, key=natural_keys)
+
+    outdir = os.path.join(session_path, pipeline_videos_labeled)
+    
+    for fname in labels_fnames:
+        basename = os.path.basename(fname)
+        basename = os.path.splitext(basename)[0]
+        out_fname = os.path.join(outdir, basename+'.avi')
+        vidname = os.path.join(session_path, pipeline_videos_raw, basename+'.avi')
+        if os.path.exists(vidname):
+            if os.path.exists(out_fname) and \
+               abs(get_nframes(out_fname) - get_nframes(vidname)) < 100:
+                n_labeled += 1
+    
+    if len(videos)>0:
+        print(os.path.basename(session_path))
+        print('    Analyzed: ', n_analyzed, ' out of ', len(videos), ' videos.')
+        print('    Labeled:  ', n_labeled, ' out of ', len(videos), ' videos.')
+
+from .common import make_process_fun
+_check_progress = make_process_fun(__check_progress)
 
 
 if __name__ == "__main__":
